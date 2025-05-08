@@ -203,19 +203,3 @@ def add_interval_OR_data (interval_or_df:pd.DataFrame, date_str:str):
     else:
         print("❓ The date is already in the historical file")
 
-
-
-
-if __name__ == "__main__":
-    day_ahead_df = pd.read_csv(r'C:\Users\kboulliat\Desktop\Dev\Monitoring_IESO_Data_project\data\energy\day_ahead\energy_day_ahead_20250503.csv')
-    pre_dispatch_df = pd.read_csv(r'C:\Users\kboulliat\Desktop\Dev\Monitoring_IESO_Data_project\data\energy\predispatch\energy_predispatch_20250503.csv')
-    real_time_df = pd.read_csv(r'C:\Users\kboulliat\Desktop\Dev\Monitoring_IESO_Data_project\data\energy\real_time\energy_real_time_20250503.csv')
-
-    df = create_interval_energy_data(day_ahead_df, pre_dispatch_df, real_time_df)
-
-    folder = "data/energy/processed"
-    os.makedirs(folder, exist_ok=True)
-    output_path = os.path.join(folder, f"energy_interval_historical.csv")
-    #df.to_csv(output_path, index=False)
-
-    add_interval_energy_data(df, '20250503')
