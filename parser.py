@@ -320,23 +320,6 @@ def fetch_real_time_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
     except:
         print("❌ Failed to save the file")
 
-
-
-
-
-
-#if __name__ == "__main__":
-    #fetch_day_ahead_energy_lmp("20250505")
-    #time.sleep(20)
-    #fetch_day_ahead_OR_lmp("20250503")
-    #time.sleep(20)
-    #fetch_predisp_energy_lmp("20250503")
-    #time.sleep(20)
-    #fetch_predisp_OR_lmp("20250503")
-    #time.sleep(20)
-    #fetch_real_time_energy_lmp("20250503")
-    #time.sleep(20)
-    #fetch_real_time_OR_lmp("20250503")
     
 
 
