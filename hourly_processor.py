@@ -203,19 +203,3 @@ def add_hourly_OR_data (hourly_or_df:pd.DataFrame, date_str:str):
         print("✅ OR historical data updated")
     else:
         print("❓ The date is already in the historical OR file")
-
-
-
-if __name__ == "__main__":
-    day_ahead_df = pd.read_csv(r'C:\Users\kboulliat\Desktop\Dev\Monitoring_IESO_Data_project\data\operating_reserve\day_ahead\OR_day_ahead_20250503.csv')
-    pre_dispatch_df = pd.read_csv(r'C:\Users\kboulliat\Desktop\Dev\Monitoring_IESO_Data_project\data\operating_reserve\predispatch\OR_predispatch_20250503.csv')
-    real_time_df = pd.read_csv(r'C:\Users\kboulliat\Desktop\Dev\Monitoring_IESO_Data_project\data\operating_reserve\real_time\OR_real_time_20250503.csv')
-
-    df=create_hourly_OR_data(day_ahead_df, pre_dispatch_df, real_time_df )
-
-    folder = "data/operating_reserve/processed"
-    os.makedirs(folder, exist_ok=True)
-    output_path = os.path.join(folder, f"operating_reserve_hourly_historical.csv")
-    #df.to_csv(output_path, index=False)
-
-    add_hourly_OR_data(df, '20250503')
