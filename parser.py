@@ -29,7 +29,7 @@ def fetch_day_ahead_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
         "User-Agent": "Mozilla/5.0"
     }
 
-    print(f"📥 Fetching Energy Day-Ahead data for date: {date_str}")
+    print(f"📥 Fetching Energy Day-Ahead data for date: {date_str}" ,flush=True)
     response = requests.get(full_url, headers=headers, verify=False)
     time.sleep(sleep_sec)
 
@@ -44,10 +44,10 @@ def fetch_day_ahead_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
 
         try:
             df.to_csv(local_path, index=False, compression="gzip")
-            print(f"✅ Energy Day-Ahead file saved locally: {local_path}")
+            print(f"✅ Energy Day-Ahead file saved locally: {local_path}" ,flush=True)
 
         except Exception as e:
-            print(f"❌ Failed to save Energy Day-Ahead file locally: {e}")
+            print(f"❌ Failed to save Energy Day-Ahead file locally: {e}" ,flush=True)
 
         # Upload to GCS
         try:
@@ -57,10 +57,10 @@ def fetch_day_ahead_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
             blob = bucket.blob(blob_path)
 
             blob.upload_from_filename(local_path)
-            print(f"✅ Energy Day-Ahead file uploaded to GCS: {blob.public_url}")
+            print(f"✅ Energy Day-Ahead file uploaded to GCS: {blob.public_url}" ,flush=True)
 
         except Exception as e:
-            print(f"❌ Failed to upload Energy Day-Ahead file to GCS: {e}")
+            print(f"❌ Failed to upload Energy Day-Ahead file to GCS: {e}" ,flush=True)
 
     else:
         raise ConnectionError(f"❌ Failed to download file {filename}: HTTP {response.status_code}")
@@ -90,7 +90,7 @@ def fetch_day_ahead_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     } #Avoir being suspicious when scrapping
 
-    print(f"📥 Fetching Operating Reserve Day-Ahead data for date: {date_str}")
+    print(f"📥 Fetching Operating Reserve Day-Ahead data for date: {date_str}" ,flush=True)
     response = requests.get(full_url, headers=headers, verify=False)
     time.sleep(sleep_sec) # Avoid being suspicious
 
@@ -105,10 +105,10 @@ def fetch_day_ahead_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
 
         try:
             predisp_or_lmp_df.to_csv(local_path, index=False, compression="gzip")
-            print(f"✅ Operating Reserve Day-Ahead file saved into folder {folder}")
+            print(f"✅ Operating Reserve Day-Ahead file saved into folder {folder}" ,flush=True)
 
         except:
-            print("❌ Failed to save locally the Operating Reserve Day-Ahead file")
+            print("❌ Failed to save locally the Operating Reserve Day-Ahead file" ,flush=True)
         
         # Upload to GCS
         try:
@@ -118,13 +118,13 @@ def fetch_day_ahead_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
             blob = bucket.blob(blob_path)
 
             blob.upload_from_filename(local_path)
-            print(f"✅ Operating Reserve Day-Ahead file uploaded to GCS: {blob.public_url}")
+            print(f"✅ Operating Reserve Day-Ahead file uploaded to GCS: {blob.public_url}" ,flush=True)
         
         except Exception as e:
-            print(f"❌ Failed to upload to GCS: {e}")     
+            print(f"❌ Failed to upload to GCS: {e}" ,flush=True)     
 
     else:
-        print(f"⚠️ File not found for date {date_str}: HTTP {response.status_code}")
+        print(f"⚠️ File not found for date {date_str}: HTTP {response.status_code}" ,flush=True)
         return pd.DataFrame()  # Return empty DataFrame instead of crashing
 
 
@@ -158,7 +158,7 @@ def fetch_predisp_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     } #Avoir being suspicious when scrapping
 
-    print(f"📥 Fetching Energy Pre-Dispatch data for date: {date_str}")
+    print(f"📥 Fetching Energy Pre-Dispatch data for date: {date_str}" ,flush=True)
     response = requests.get(full_url, headers=headers, verify=False)
     time.sleep(sleep_sec) # Avoid being suspicious
 
@@ -173,9 +173,9 @@ def fetch_predisp_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
 
         try:
             predisp_or_lmp_df.to_csv(output_path, index=False, compression="gzip")
-            print(f"✅ Energy Pre-Dispatch file saved into folder {folder}")
+            print(f"✅ Energy Pre-Dispatch file saved into folder {folder}" ,flush=True)
         except:
-            print("❌ Failed to save locally Energy Pre-Dispatch the file")
+            print("❌ Failed to save locally Energy Pre-Dispatch the file" ,flush=True)
 
         # Upload to GCS
         try:
@@ -185,13 +185,13 @@ def fetch_predisp_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
             blob = bucket.blob(blob_path)
 
             blob.upload_from_filename(output_path)
-            print(f"✅ Energy Pre-Dispatch file uploaded to GCS: {blob.public_url}")
+            print(f"✅ Energy Pre-Dispatch file uploaded to GCS: {blob.public_url}" ,flush=True)
 
         except Exception as e:
-            print(f"❌ Failed to upload Energy Pre-Dispatch file to GCS: {e}")
+            print(f"❌ Failed to upload Energy Pre-Dispatch file to GCS: {e}" ,flush=True)
             
     else:
-        print(f"⚠️ File not found for date {date_str}: HTTP {response.status_code}")
+        print(f"⚠️ File not found for date {date_str}: HTTP {response.status_code}" ,flush=True)
         return pd.DataFrame()  # Return empty DataFrame instead of crashing
 
 
@@ -219,7 +219,7 @@ def fetch_predisp_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
     } #Avoir being suspicious when scrapping
 
-    print(f"📥 Fetching Operating Reserve Pre-Dispatch data for date: {date_str}")
+    print(f"📥 Fetching Operating Reserve Pre-Dispatch data for date: {date_str}" ,flush=True)
     response = requests.get(full_url, headers=headers, verify=False)
     time.sleep(sleep_sec) # Avoid being suspicious
 
@@ -234,9 +234,9 @@ def fetch_predisp_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
 
         try:
             predisp_or_lmp_df.to_csv(output_path, index=False, compression='gzip')
-            print(f"✅ Pre-Dispatch Operating Reserve file saved into folder {folder}")
+            print(f"✅ Pre-Dispatch Operating Reserve file saved into folder {folder}" ,flush=True)
         except:
-            print("❌ Failed to save locally Pre-Dispatch Operating Reserve file")
+            print("❌ Failed to save locally Pre-Dispatch Operating Reserve file" ,flush=True)
 
         # Upload to GCS
         try:
@@ -246,13 +246,13 @@ def fetch_predisp_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
             blob = bucket.blob(blob_path)
 
             blob.upload_from_filename(output_path)
-            print(f"✅ Pre-Dispatch Operating Reserve file uploaded to GCS: {blob.public_url}")
+            print(f"✅ Pre-Dispatch Operating Reserve file uploaded to GCS: {blob.public_url}" ,flush=True)
 
         except Exception as e:
-            print(f"❌ Failed to upload Pre-Dispatch Operating Reserve file to GCS: {e}")
+            print(f"❌ Failed to upload Pre-Dispatch Operating Reserve file to GCS: {e}" ,flush=True)
 
     else:
-        print(f"⚠️ File not found for date {date_str}: HTTP {response.status_code}")
+        print(f"⚠️ File not found for date {date_str}: HTTP {response.status_code}" ,flush=True)
         return pd.DataFrame()  # Return empty DataFrame instead of crashing
     
 
@@ -287,7 +287,7 @@ def fetch_real_time_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
         filename = f"PUB_RealtimeEnergyLMP_{date_str}{h}.csv"
         full_url = base_url + filename
 
-        print(f"📥 Fetching Energy Real-Time data for date: {date_str} and hour {h}") 
+        print(f"📥 Fetching Energy Real-Time data for date: {date_str} and hour {h}" ,flush=True) 
         response = requests.get(full_url, headers=headers, verify=False)
         time.sleep(sleep_sec) # Avoid being suspicious
 
@@ -309,9 +309,9 @@ def fetch_real_time_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
 
     try:
         real_time_lmp_df.to_csv(output_path, index=False, compression="gzip")
-        print(f"✅ Real-Time energy file saved into folder {folder}")
+        print(f"✅ Real-Time energy file saved into folder {folder}" ,flush=True)
     except:
-        print("❌ Failed to save locally the Real-Time energy file")
+        print("❌ Failed to save locally the Real-Time energy file" ,flush=True)
 
         # Upload to GCS
     try:
@@ -321,10 +321,10 @@ def fetch_real_time_energy_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
         blob = bucket.blob(blob_path)
 
         blob.upload_from_filename(output_path)
-        print(f"✅ Real-Time energy file uploaded to GCS: {blob.public_url}")
+        print(f"✅ Real-Time energy file uploaded to GCS: {blob.public_url}" ,flush=True)
     
     except Exception as e:
-        print(f"❌ Failed to upload Real-Time energy file to GCS: {e}")   
+        print(f"❌ Failed to upload Real-Time energy file to GCS: {e}" ,flush=True)   
 
 
 
@@ -353,7 +353,7 @@ def fetch_real_time_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
         filename = f"PUB_RealtimeORLMP_{date_str}{h}.csv"
         full_url = base_url + filename
 
-        print(f"📥 Fetching Real-Time Operating Reserve data for date: {date_str} and hour {h}") 
+        print(f"📥 Fetching Real-Time Operating Reserve data for date: {date_str} and hour {h}" ,flush=True) 
         response = requests.get(full_url, headers=headers, verify=False)
         time.sleep(sleep_sec) # Avoid being suspicious
 
@@ -375,9 +375,9 @@ def fetch_real_time_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
 
     try:
         real_time_or_lmp_df.to_csv(output_path, index=False, compression="gzip")
-        print(f"✅ Real-Time Operating Reserve file saved into folder {folder}")
+        print(f"✅ Real-Time Operating Reserve file saved into folder {folder}" ,flush=True)
     except:
-        print("❌ Failed to locally save the Real-Time Operating Reserve file")
+        print("❌ Failed to locally save the Real-Time Operating Reserve file" ,flush=True)
 
     # Upload to GCS
     try:
@@ -387,10 +387,10 @@ def fetch_real_time_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
         blob = bucket.blob(blob_path)
 
         blob.upload_from_filename(output_path)
-        print(f"✅ Real-Time Operating Reserve file uploaded to GCS: {blob.public_url}")
+        print(f"✅ Real-Time Operating Reserve file uploaded to GCS: {blob.public_url}" ,flush=True)
     
     except Exception as e:
-        print(f"❌ Failed to upload Real-Time Operating Reserve file to GCS: {e}")   
+        print(f"❌ Failed to upload Real-Time Operating Reserve file to GCS: {e}" ,flush=True)   
 
 
 
