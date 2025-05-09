@@ -8,7 +8,7 @@ import io
 import os 
 
 from parser import fetch_day_ahead_energy_lmp, fetch_day_ahead_OR_lmp, fetch_predisp_energy_lmp, fetch_predisp_OR_lmp, fetch_real_time_energy_lmp, fetch_real_time_OR_lmp
-from hourly_processor import create_hourly_energy_data, create_hourly_OR_data, add_hourly_energy_data, add_hourly_OR_data
+from hourly_processor import create_hourly_energy_data, create_hourly_OR_data, add_hourly_energy_data, add_hourly_OR_data, spread_calculation
 from interval_processor import expand_to_intervals, create_interval_energy_data, create_interval_OR_data, add_interval_energy_data, add_interval_OR_data
 
 
