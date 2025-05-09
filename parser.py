@@ -8,7 +8,6 @@ from pathlib import Path
 import time
 from google.cloud import storage
 import urllib3
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "ieso-monitoring-27f5dd4ce497.json"
 
 
 
@@ -396,18 +395,18 @@ def fetch_real_time_OR_lmp(date_str: str, sleep_sec=5) -> pd.DataFrame:
 
 
 
-if __name__ == "__main__":
-    fetch_day_ahead_energy_lmp("20250504")
-    time.sleep(20)
-    fetch_day_ahead_OR_lmp("20250504")
-    time.sleep(20)
-    fetch_predisp_energy_lmp("20250504")
-    time.sleep(20)
-    fetch_predisp_OR_lmp("20250504")
-    time.sleep(20)
-    fetch_real_time_energy_lmp("20250504")
-    time.sleep(20)
-    fetch_real_time_OR_lmp("20250504")
+#if __name__ == "__main__":
+    #fetch_day_ahead_energy_lmp("20250504")
+    #time.sleep(20)
+    #fetch_day_ahead_OR_lmp("20250504")
+    #time.sleep(20)
+    #fetch_predisp_energy_lmp("20250504")
+    #time.sleep(20)
+    #fetch_predisp_OR_lmp("20250504")
+    #time.sleep(20)
+    #fetch_real_time_energy_lmp("20250504")
+    #time.sleep(20)
+    #fetch_real_time_OR_lmp("20250504")
     
 
 
