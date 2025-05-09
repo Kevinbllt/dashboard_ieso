@@ -22,9 +22,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: 🗝️ Inject GCP credentials
-        run: |
-          echo "${{ secrets.GCP_KEY_JSON }}" > gcs_key.json
-          export GOOGLE_APPLICATION_CREDENTIALS=gcs_key.json
-
+        run: echo "${{ secrets.GCP_KEY_JSON }}" > gcs_key.json
+      
       - name: 🚀 Run orchestrator
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: gcs_key.json
         run: python orchestrator.py
