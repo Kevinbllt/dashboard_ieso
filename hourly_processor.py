@@ -19,7 +19,7 @@ def create_hourly_energy_data (energy_day_ahead_df:pd.DataFrame, energy_pre_disp
         pd.DataFrame, with the 3 dfs merged at a hourly granularity for a specific date for energy data.
     """
 
-    print("🧑‍🍳 Start creating hourly energy data")
+    print("🧑‍🍳 Start creating hourly energy data" ,flush=True)
 
     col_to_rename = ['LMP', 'Energy Loss Price', 'Energy Congestion Price']
 
@@ -58,7 +58,7 @@ def create_hourly_energy_data (energy_day_ahead_df:pd.DataFrame, energy_pre_disp
     how = 'inner'
     )
 
-    print("✅ Finished the creation of hourly energy data")
+    print("✅ Finished the creation of hourly energy data" ,flush=True)
 
     return hourly_energy_df2
 
@@ -77,7 +77,7 @@ def create_hourly_OR_data (or_day_ahead_df:pd.DataFrame, or_pre_dispatch_df:pd.D
         pd.DataFrame, with the 3 dfs merged at a hourly granularity for a specific date for OR data.
     """
 
-    print("🧑‍🍳 Start creating hourly OR data")
+    print("🧑‍🍳 Start creating hourly OR data" ,flush=True)
 
     col_to_rename = ['LMP 10S', 'Congestion Price 10S', 'LMP 10N', 'Congestion Price 10N','LMP 30R', 'Congestion Price 30R']
 
@@ -120,7 +120,7 @@ def create_hourly_OR_data (or_day_ahead_df:pd.DataFrame, or_pre_dispatch_df:pd.D
     how = 'inner'
     )
 
-    print("✅ Finished the creation of hourly OR data")
+    print("✅ Finished the creation of hourly OR data" ,flush=True)
 
     return hourly_or_df2
 
@@ -137,7 +137,7 @@ def write_df_to_gcs(df, blob_path):
 
     blob.upload_from_file(buffer, content_type="application/gzip")
 
-    print(f"✅ Fichier mis à jour dans GCS : gs://ieso_monitoring_market_data/{blob_path}")
+    print(f"✅ Fichier mis à jour dans GCS : gs://ieso_monitoring_market_data/{blob_path}" ,flush=True)
 
 
 
@@ -166,17 +166,17 @@ def add_hourly_energy_data (hourly_energy_df:pd.DataFrame, date_str:str):
     energy_historical_df["Date"] = pd.to_datetime(energy_historical_df["Date"]).dt.normalize()
 
     if target_date.date() not in energy_historical_df["Date"].dt.date.unique():
-        print("⚙️ Start adding the new data to the historical energy file")
+        print("⚙️ Start adding the new data to the historical energy file" ,flush=True)
         hourly_energy_df = hourly_energy_df[energy_historical_columns]  # enforce column order
         new_historical_df = pd.concat([energy_historical_df, hourly_energy_df], axis=0)
         new_historical_df.sort_values('Date', ascending=True)
 
         write_df_to_gcs(new_historical_df, "energy/processed/energy_historical_hourly.csv.gz")
-        print("✅ Energy historical hourly data updated into GCP")
+        print("✅ Energy historical hourly data updated into GCP" ,flush=True)
 
 
     else:
-        print("❓ The date is already in the GCP historical hourly file")
+        print("❓ The date is already in the GCP historical hourly file" ,flush=True)
 
 
 
@@ -208,7 +208,7 @@ def add_hourly_OR_data (hourly_or_df:pd.DataFrame, date_str:str):
 
     # Check sur l’historique, pas sur le nouveau
     if target_date.date() not in or_historical_df["Date"].dt.date.unique():
-        print("⚙️ Start adding the new data to the historical OR file")
+        print("⚙️ Start adding the new data to the historical OR file" ,flush=True)
 
         hourly_or_df = hourly_or_df[or_historical_columns]  # 🔁 pas hourly_energy_df ici
         new_historical_df = pd.concat([or_historical_df, hourly_or_df], axis=0)
@@ -216,9 +216,9 @@ def add_hourly_OR_data (hourly_or_df:pd.DataFrame, date_str:str):
 
         write_df_to_gcs(new_historical_df, "operating_reserve/processed/OR_historical_hourly.csv.gz")
 
-        print("✅ OR historical hourly data updated into GCP")
+        print("✅ OR historical hourly data updated into GCP" ,flush=True)
     else:
-        print("❓ The date is already in the historical GCP OR file")
+        print("❓ The date is already in the historical GCP OR file" ,flush=True)
 
 
 
