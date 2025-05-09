@@ -7,11 +7,10 @@ import time
 from prefect import flow, task
 import io
 import os 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "ieso-monitoring-27f5dd4ce497.json"
 
-from src.parser import fetch_day_ahead_energy_lmp, fetch_day_ahead_OR_lmp, fetch_predisp_energy_lmp, fetch_predisp_OR_lmp, fetch_real_time_energy_lmp, fetch_real_time_OR_lmp
-from src.hourly_processor import create_hourly_energy_data, create_hourly_OR_data, add_hourly_energy_data, add_hourly_OR_data
-from src.interval_processor import expand_to_intervals, create_interval_energy_data, create_interval_OR_data, add_interval_energy_data, add_interval_OR_data
+from parser import fetch_day_ahead_energy_lmp, fetch_day_ahead_OR_lmp, fetch_predisp_energy_lmp, fetch_predisp_OR_lmp, fetch_real_time_energy_lmp, fetch_real_time_OR_lmp
+from hourly_processor import create_hourly_energy_data, create_hourly_OR_data, add_hourly_energy_data, add_hourly_OR_data
+from interval_processor import expand_to_intervals, create_interval_energy_data, create_interval_OR_data, add_interval_energy_data, add_interval_OR_data
 
 
 
@@ -116,7 +115,7 @@ def run_all_flow(date_today_str):
 
 
 if __name__ == "__main__":
-    yesterday_date_str = (date.today() - timedelta(days=2)).strftime(format="%Y%m%d")
+    yesterday_date_str = (date.today() - timedelta(days=1)).strftime(format="%Y%m%d")
     run_all_flow(yesterday_date_str)
 
 
