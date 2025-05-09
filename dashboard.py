@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+from datetime import datetime
 import plotly.express as px
 from filter import apply_filters, compute_average_by_hour
 
@@ -178,9 +179,9 @@ if not df_avg.empty:
 
 
 st.markdown(
-    """
+    f"""
     <div style='text-align: center; color: grey; margin-top: 50px; font-size: 0.9em;'>
-        🕑 This dashboard is updated every day at <b>10am Toronto time</b>
+        🕑 This dashboard is updated every day at <b>10am Toronto time</b> — last checked: {datetime.now().strftime('%H:%M:%S')}
     </div>
     """,
     unsafe_allow_html=True
