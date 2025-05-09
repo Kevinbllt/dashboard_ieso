@@ -4,12 +4,17 @@ import plotly.graph_objects as go
 import plotly.express as px
 from filter import apply_filters, compute_average_by_hour
 
-
 # ======= CONFIGURATION =======
 st.set_page_config(page_title="IESO Market Dashboard", layout="wide")
 st.title("📊 IESO Market Dashboard")
 
-# ======= LOAD DATA =======
+# ======= LOAD DATA (cached) =======
+@st.cache_data(ttl=3600)
+def load_dataset(url):
+    df = pd.read_csv(url, compression='gzip', parse_dates=["Date"])
+    df.sort_values('Date', ascending=True, inplace=True)
+    return df
+
 dataset_option = st.sidebar.selectbox("⚡ Available Datasets", [
     "Energy - Hourly",
     "Operating Reserve - Hourly",
@@ -17,27 +22,15 @@ dataset_option = st.sidebar.selectbox("⚡ Available Datasets", [
     "Operating Reserve - 5-min intervals"
 ])
 
-hourly_bool = "5-min" not in dataset_option  # Define type of granularity
+dataset_urls = {
+    "Energy - Hourly": "https://storage.googleapis.com/ieso_monitoring_market_data/energy/processed/energy_historical_hourly.csv.gz",
+    "Operating Reserve - Hourly": "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/processed/OR_historical_hourly.csv.gz",
+    "Energy - 5-min intervals": "https://storage.googleapis.com/ieso_monitoring_market_data/energy/processed/energy_historical_interval.csv.gz",
+    "Operating Reserve - 5-min intervals": "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/processed/OR_historical_interval.csv.gz"
+}
 
-if dataset_option == 'Energy - Hourly':
-    energy_hourly_url = "https://storage.googleapis.com/ieso_monitoring_market_data/energy/processed/energy_historical_hourly.csv.gz"
-    df = pd.read_csv(energy_hourly_url ,compression='gzip', parse_dates=["Date"])
-    df.sort_values('Date', ascending=True)
-
-elif dataset_option == 'Operating Reserve - Hourly':
-    or_hourly_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/processed/OR_historical_hourly.csv.gz"
-    df = pd.read_csv(or_hourly_url ,compression='gzip', parse_dates=["Date"])
-    df.sort_values('Date', ascending=True)
-
-elif dataset_option == 'Energy - 5-min intervals':
-    energy_interval_url = "https://storage.googleapis.com/ieso_monitoring_market_data/energy/processed/energy_historical_interval.csv.gz"
-    df = pd.read_csv(energy_interval_url ,compression='gzip', parse_dates=["Date"])
-    df.sort_values('Date', ascending=True)
-
-elif dataset_option == 'Operating Reserve - 5-min intervals':
-    or_interval_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/processed/OR_historical_interval.csv.gz"
-    df = pd.read_csv(or_interval_url ,compression='gzip', parse_dates=["Date"])
-    df.sort_values('Date', ascending=True)
+hourly_bool = "5-min" not in dataset_option
+df = load_dataset(dataset_urls[dataset_option])
 
 # ======= SIDEBAR FILTERS =======
 with st.sidebar:
@@ -45,13 +38,13 @@ with st.sidebar:
 
     st.subheader("📍 Location Settings")
     all_locations = df["Pricing Location"].unique().tolist()
-    selected_locations = st.multiselect("Pricing Location", all_locations, default=all_locations[:3])
+    selected_locations = st.multiselect("Pricing Location", all_locations, default=[])
 
     st.subheader("📅 Date Settings")
     min_date, max_date = df["Date"].min(), df["Date"].max()
     date_range = st.date_input("Date range", [min_date, max_date])
 
-    include_avg = st.checkbox("Include average across selected dates")
+    include_avg = st.checkbox("Include average across selected dates", value=True)
 
     if len(date_range) == 2:
         start_date, end_date = pd.to_datetime(date_range[0]), pd.to_datetime(date_range[1])
