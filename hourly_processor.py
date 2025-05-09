@@ -220,7 +220,19 @@ def add_hourly_OR_data (hourly_or_df:pd.DataFrame, date_str:str):
     else:
         print("❓ The date is already in the historical GCP OR file" ,flush=True)
 
+def spread_calculation():
+    print("🧮 Start calculating the spread")
 
+    energy_url = "https://storage.googleapis.com/ieso_monitoring_market_data/energy/processed/energy_historical_hourly.csv.gz"
+    df = pd.read_csv(energy_url, compression='gzip' , parse_dates=["Date"])
+    
+    df['spread_Day_Ahead_vs_Real_Time'] = df['LMP_Day_Ahead'] - df['LMP_Real_Time'] 
+    df["spread_4h_Day_Ahead"] = df["LMP_Day_Ahead"].rolling(window=4).apply(lambda x: x.max() - x.min())
+    df["spread_4h_Pre_Dispatch"] = df["LMP_Pre_Dispatch"].rolling(window=4).apply(lambda x: x.max() - x.min())
+    df["spread_4h_Real_Time"] = df["LMP_Real_Time"].rolling(window=4).apply(lambda x: x.max() - x.min())
+
+    write_df_to_gcs(df, "energy/processed/energy_historical_hourly.csv.gz")
+    print("✅ Finished calculating the spread and file saved")
 
 #if __name__ == "__main__":
     #day_ahead_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/day_ahead/OR_day_ahead_20250504.csv.gz"
