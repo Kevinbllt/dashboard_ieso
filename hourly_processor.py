@@ -4,7 +4,6 @@ import pandas as pd
 import os 
 from google.cloud import storage
 import io
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "ieso-monitoring-27f5dd4ce497.json"
 
 
 def create_hourly_energy_data (energy_day_ahead_df:pd.DataFrame, energy_pre_dispatch_df:pd.DataFrame, energy_real_time_df:pd.DataFrame) -> pd.DataFrame:
@@ -223,27 +222,27 @@ def add_hourly_OR_data (hourly_or_df:pd.DataFrame, date_str:str):
 
 
 
-if __name__ == "__main__":
-    day_ahead_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/day_ahead/OR_day_ahead_20250504.csv.gz"
-    day_ahead_df = pd.read_csv(day_ahead_url, compression='gzip',parse_dates=["Date"])
+#if __name__ == "__main__":
+    #day_ahead_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/day_ahead/OR_day_ahead_20250504.csv.gz"
+    #day_ahead_df = pd.read_csv(day_ahead_url, compression='gzip',parse_dates=["Date"])
      
-    pre_dispatch_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/pre_disptach/OR_pre_dispatch_20250504.csv.gz"
-    pre_dispatch_df = pd.read_csv(pre_dispatch_url, compression='gzip',parse_dates=["Date"])
+    #pre_dispatch_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/pre_disptach/OR_pre_dispatch_20250504.csv.gz"
+    #pre_dispatch_df = pd.read_csv(pre_dispatch_url, compression='gzip',parse_dates=["Date"])
 
-    real_time_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/real_time/OR_real_time_20250504.csv.gz"
-    real_time_df = pd.read_csv(real_time_url, compression='gzip',parse_dates=["Date"])
+    #real_time_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/real_time/OR_real_time_20250504.csv.gz"
+    #real_time_df = pd.read_csv(real_time_url, compression='gzip',parse_dates=["Date"])
 
-    df = create_hourly_OR_data(day_ahead_df, pre_dispatch_df, real_time_df )
+    #df = create_hourly_OR_data(day_ahead_df, pre_dispatch_df, real_time_df )
 
-    folder = "data/operating_reserve/processed"
-    os.makedirs(folder, exist_ok=True)
-    output_path = os.path.join(folder, f"OR_historical_hourly.csv.gz")
+    #folder = "data/operating_reserve/processed"
+    #os.makedirs(folder, exist_ok=True)
+    #output_path = os.path.join(folder, f"OR_historical_hourly.csv.gz")
     #df.to_csv(output_path, index=False, compression="gzip")
 
 
-    storage_client = storage.Client()
-    bucket = storage_client.bucket("ieso_monitoring_market_data")
-    blob_path = f"operating_reserve/processed/OR_historical_hourly.csv.gz"
+    #storage_client = storage.Client()
+    #bucket = storage_client.bucket("ieso_monitoring_market_data")
+    #blob_path = f"operating_reserve/processed/OR_historical_hourly.csv.gz"
     #blob = bucket.blob(blob_path)
     #blob.upload_from_filename(output_path)
  
@@ -254,7 +253,7 @@ if __name__ == "__main__":
     #output_path = os.path.join(folder, f"operating_reserve_hourly_historical.csv")
     #df.to_csv(output_path, index=False)
 
-    add_hourly_OR_data(df, '20250504')
+    #add_hourly_OR_data(df, '20250504')
 
     #energy_url = "https://storage.googleapis.com/ieso_monitoring_market_data/energy/processed/energy_hourly2_historical.csv.gz"
     #print(pd.read_csv(energy_url, compression='gzip' , parse_dates=["Date"]))
