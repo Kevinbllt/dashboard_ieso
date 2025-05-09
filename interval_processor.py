@@ -31,7 +31,7 @@ def create_interval_energy_data (energy_day_ahead_df:pd.DataFrame, energy_pre_di
         pd.DataFrame, with the 3 dfs merged at a interval granularity for a specific date for energy data.
     """
 
-    print("🧑‍🍳 Start creating interval energy data")
+    print("🧑‍🍳 Start creating interval energy data" ,flush=True)
 
     col_to_rename = ['LMP', 'Energy Loss Price', 'Energy Congestion Price']
 
@@ -62,7 +62,7 @@ def create_interval_energy_data (energy_day_ahead_df:pd.DataFrame, energy_pre_di
     how = 'inner'
     )
 
-    print("✅ Finished the creation of interval energy data")
+    print("✅ Finished the creation of interval energy data" ,flush=True)
 
     return interval_energy_df2
 
@@ -81,7 +81,7 @@ def create_interval_OR_data (or_day_ahead_df:pd.DataFrame, or_pre_dispatch_df:pd
         pd.DataFrame, with the 3 dfs merged at a interval granularity for a specific date for OR data.
     """
 
-    print("🧑‍🍳 Start creating interval OR data")
+    print("🧑‍🍳 Start creating interval OR data" ,flush=True)
 
     col_to_rename = ['LMP 10S', 'Congestion Price 10S', 'LMP 10N', 'Congestion Price 10N','LMP 30R', 'Congestion Price 30R']
 
@@ -121,7 +121,7 @@ def create_interval_OR_data (or_day_ahead_df:pd.DataFrame, or_pre_dispatch_df:pd
     how = 'inner'
     )
 
-    print("✅ Finished the creation of interval OR data")
+    print("✅ Finished the creation of interval OR data" ,flush=True)
 
     return interval_or_df2
 
@@ -137,7 +137,7 @@ def write_df_to_gcs(df, blob_path):
 
     blob.upload_from_file(buffer, content_type="application/gzip")
 
-    print(f"✅ Fichier mis à jour dans GCS : gs://ieso_monitoring_market_data/{blob_path}")
+    print(f"✅ Fichier mis à jour dans GCS : gs://ieso_monitoring_market_data/{blob_path}" ,flush=True)
 
 
 def add_interval_energy_data (interval_energy_df:pd.DataFrame, date_str:str):
@@ -166,7 +166,7 @@ def add_interval_energy_data (interval_energy_df:pd.DataFrame, date_str:str):
 
 
     if target_date.date() not in energy_historical_df["Date"].dt.date.unique():
-        print("⚙️ Start adding the new data to the historical energy file")
+        print("⚙️ Start adding the new data to the historical energy file" ,flush=True)
         interval_energy_df = interval_energy_df[energy_historical_columns] # Make sure we have the columns in the same order
         new_historical_df = pd.concat([energy_historical_df, interval_energy_df], axis=0)
         new_historical_df.sort_values('Date', ascending=True)
@@ -175,7 +175,7 @@ def add_interval_energy_data (interval_energy_df:pd.DataFrame, date_str:str):
         print("✅ Operating Reserve historical interval data updated into GCP")
 
     else:
-        print("❓ The date is already in the historical GCP file")
+        print("❓ The date is already in the historical GCP file" ,flush=True)
 
 
 
@@ -206,7 +206,7 @@ def add_interval_OR_data (interval_or_df:pd.DataFrame, date_str:str):
     or_historical_df["Date"] = pd.to_datetime(or_historical_df["Date"]).dt.normalize()
 
     if target_date.date() not in or_historical_df["Date"].dt.date.unique():
-        print("⚙️ Start adding the new data to the historical OR file")
+        print("⚙️ Start adding the new data to the historical OR file" ,flush=True)
         interval_or_df = interval_or_df[or_interval_columns] # Make sure we have the columns in the same order
         new_historical_df = pd.concat([or_historical_df, interval_or_df], axis=0)
         new_historical_df.sort_values('Date', ascending=True)
@@ -215,7 +215,7 @@ def add_interval_OR_data (interval_or_df:pd.DataFrame, date_str:str):
         print("✅ Operating Reserve historical interval data updated into GCP")
 
     else:
-        print("❓ The date is already in the historical GCP file")
+        print("❓ The date is already in the historical GCP file" ,flush=True)
 
 
 
