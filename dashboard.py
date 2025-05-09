@@ -180,7 +180,7 @@ if not df_avg.empty:
 st.markdown(
     """
     <div style='text-align: center; color: grey; margin-top: 50px; font-size: 0.9em;'>
-        🕑 This dashboard is updated every day at <b>2pm Toronto time</b>
+        🕑 This dashboard is updated every day at <b>10am Toronto time</b>
     </div>
     """,
     unsafe_allow_html=True
