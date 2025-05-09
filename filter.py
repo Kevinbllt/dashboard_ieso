@@ -3,8 +3,6 @@
 import pandas as pd
 
 
-import pandas as pd
-
 def apply_filters(df: pd.DataFrame, 
                   locations: list = None, 
                   dispatch_type: list=None,
@@ -108,3 +106,36 @@ def compute_average_by_hour(
 
     return df_avg
 
+
+
+def sort_and_extract_top(df, sort_col='LMP_Day_Ahead', ascending=True, top_n=5):
+    df_grouped = (
+        df.groupby('Pricing Location')
+          .mean(numeric_only=True)
+          .reset_index()
+          .sort_values(by=sort_col, ascending=ascending)
+    )
+
+    return df_grouped[['Pricing Location', sort_col]].head(top_n)
+
+def build_statistics (df):
+
+    metrics = [
+        "LMP_Day_Ahead",
+        "LMP_Real_Time",
+        "spread_4h_Day_Ahead",
+        "spread_4h_Real_Time",
+        "spread_Day_Ahead_vs_Real_Time"
+    ]
+
+    dict_top = {}
+
+    for metric in metrics:
+        dict_top[f"low_{metric}"] = sort_and_extract_top(
+            df,  sort_col=metric, ascending=True, top_n=5
+        )
+        dict_top[f"high_{metric}"] = sort_and_extract_top(
+            df, sort_col=metric, ascending=False, top_n=5
+        )
+
+    return dict_top
