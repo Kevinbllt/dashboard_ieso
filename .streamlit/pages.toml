@@ -1,0 +1,7 @@
+[[pages]]
+path = "dashboard.py"
+name = "📈 Market Data"
+
+[[pages]]
+path = "pages/market_statistics.py"
+name = "📊 Statistics"
