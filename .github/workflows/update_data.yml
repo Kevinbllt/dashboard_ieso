@@ -27,4 +27,4 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=gcs_key.json
 
       - name: 🚀 Run orchestrator
-        run: python src/orchestrator.py
+        run: python dashboard_ieso/src/orchestrator.py
