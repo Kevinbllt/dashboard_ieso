@@ -17,30 +17,30 @@ def import_daily_data (date_today_str:str):
     """
     Fetch and store raw energy and operating reserve data for a specific date for Day-Ahead, Pre-Dispatch and Real-Time.
     """
-    print("🔄 Daily import of the IESO data")
+    print("🔄 Daily import of the IESO data" ,flush=True)
     fetch_day_ahead_energy_lmp(date_today_str)
-    print(f"✅ Fetched Day-Ahead energy data for the date: {date_today_str}")
+    print(f"✅ Fetched Day-Ahead energy data for the date: {date_today_str}" ,flush=True)
     time.sleep(20) # Add 20 seconds between each fetch not too look suspicious
     fetch_day_ahead_OR_lmp(date_today_str)
-    print(f"✅ Fetched Day-Ahead Operating Reserve data for the date: {date_today_str}")
+    print(f"✅ Fetched Day-Ahead Operating Reserve data for the date: {date_today_str}" ,flush=True)
     time.sleep(20)
     fetch_predisp_energy_lmp(date_today_str)
-    print(f"✅ Fetched Pre-Dispatch energy data for the date: {date_today_str}")
+    print(f"✅ Fetched Pre-Dispatch energy data for the date: {date_today_str}" ,flush=True)
     time.sleep(20)
     fetch_predisp_OR_lmp(date_today_str)
-    print(f"✅ Fetched Pre-Dispatch Operating Reserve data for the date: {date_today_str}")
+    print(f"✅ Fetched Pre-Dispatch Operating Reserve data for the date: {date_today_str}" ,flush=True)
     time.sleep(20)
     fetch_real_time_energy_lmp(date_today_str)
-    print(f"✅ Fetched Real_Time energy data for the date: {date_today_str}")
+    print(f"✅ Fetched Real_Time energy data for the date: {date_today_str}" ,flush=True)
     time.sleep(20)
     fetch_real_time_OR_lmp(date_today_str)
-    print(f"✅ Fetched Real_Time Operating Reserve data for the date: {date_today_str}")
+    print(f"✅ Fetched Real_Time Operating Reserve data for the date: {date_today_str}" ,flush=True)
 
 
 def create_hourly_data (date_today_str:str):
 
     # Get energy data for the specific date
-    print("⚙️ Start creating hourly data")
+    print("⚙️ Start creating hourly data" ,flush=True)
 
     energy_day_ahead_url = f"https://storage.googleapis.com/ieso_monitoring_market_data/energy/day_ahead/energy_day_ahead_{date_today_str}.csv.gz"
     energy_pre_dispatch_url = f"https://storage.googleapis.com/ieso_monitoring_market_data/energy/pre_dispatch/energy_pre_dispatch_{date_today_str}.csv.gz"
@@ -64,11 +64,11 @@ def create_hourly_data (date_today_str:str):
     hourly_or_df = create_hourly_OR_data(or_day_ahead_df, or_pre_dispatch_df, or_real_time_df)
 
     # Add these dfs to the historical and unique data files
-    print(f"➕ Add date for the day {date_today_str} to the historical file")
+    print(f"➕ Add date for the day {date_today_str} to the historical file" ,flush=True)
     add_hourly_energy_data(hourly_energy_df, date_today_str)
     add_hourly_OR_data(hourly_or_df, date_today_str)
 
-    print(f"✅ Hourly data created and added to the historical file for the date: {date_today_str}")
+    print(f"✅ Hourly data created and added to the historical file for the date: {date_today_str}" ,flush=True)
 
 
 def create_interval_data (date_today_str:str):
@@ -96,21 +96,21 @@ def create_interval_data (date_today_str:str):
     interval_or_df = create_interval_OR_data(or_day_ahead_df, or_pre_dispatch_df, or_real_time_df)
 
     # Add these dfs to the historical and unique data files
-    print(f"➕ Add date for the day {date_today_str} to the historical file")
+    print(f"➕ Add date for the day {date_today_str} to the historical file" ,flush=True)
     add_interval_energy_data(interval_energy_df, date_today_str)
     add_interval_OR_data(interval_or_df, date_today_str)
 
-    print(f"✅ 5-min intervals data created and added to the historical file for the date: {date_today_str}")
+    print(f"✅ 5-min intervals data created and added to the historical file for the date: {date_today_str}" ,flush=True)
 
 
 def run_all_flow(date_today_str):
 
-    print(f"Starting the flow for date: {date_today_str}")
+    print(f"Starting the flow for date: {date_today_str}" ,flush=True)
     import_daily_data(date_today_str)
     create_hourly_data(date_today_str)
     create_interval_data(date_today_str)
 
-    print('Finished the flow ✅')
+    print('Finished the flow ✅' ,flush=True)
 
 
 if __name__ == "__main__":
