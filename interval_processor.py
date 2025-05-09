@@ -5,7 +5,6 @@ import numpy as np
 import os 
 from google.cloud import storage
 import io
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "ieso-monitoring-27f5dd4ce497.json"
 
 def expand_to_intervals(df_hourly):
     """
@@ -221,17 +220,17 @@ def add_interval_OR_data (interval_or_df:pd.DataFrame, date_str:str):
 
 
 
-if __name__ == "__main__":
-    day_ahead_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/day_ahead/OR_day_ahead_20250503.csv.gz"
-    day_ahead_df = pd.read_csv(day_ahead_url, compression='gzip',parse_dates=["Date"])
+#if __name__ == "__main__":
+    #day_ahead_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/day_ahead/OR_day_ahead_20250503.csv.gz"
+    #day_ahead_df = pd.read_csv(day_ahead_url, compression='gzip',parse_dates=["Date"])
      
-    pre_dispatch_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/pre_disptach/OR_pre_dispatch_20250503.csv.gz"
-    pre_dispatch_df = pd.read_csv(pre_dispatch_url, compression='gzip',parse_dates=["Date"])
+    #pre_dispatch_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/pre_disptach/OR_pre_dispatch_20250503.csv.gz"
+    #pre_dispatch_df = pd.read_csv(pre_dispatch_url, compression='gzip',parse_dates=["Date"])
 
-    real_time_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/real_time/OR_real_time_20250503.csv.gz"
-    real_time_df = pd.read_csv(real_time_url, compression='gzip',parse_dates=["Date"])
+    #real_time_url = "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/real_time/OR_real_time_20250503.csv.gz"
+    #real_time_df = pd.read_csv(real_time_url, compression='gzip',parse_dates=["Date"])
 
-    df = create_interval_OR_data(day_ahead_df, pre_dispatch_df, real_time_df )
+    #df = create_interval_OR_data(day_ahead_df, pre_dispatch_df, real_time_df )
 
     #folder = "data/operating_reserve/processed"
     #os.makedirs(folder, exist_ok=True)
@@ -245,4 +244,4 @@ if __name__ == "__main__":
     #blob = bucket.blob(blob_path)
     #blob.upload_from_filename(output_path)
 
-    add_interval_OR_data(df, '20250503')
+    #add_interval_OR_data(df, '20250503')
