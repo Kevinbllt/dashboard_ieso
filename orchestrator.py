@@ -109,6 +109,7 @@ def run_all_flow(date_today_str):
     import_daily_data(date_today_str)
     create_hourly_data(date_today_str)
     create_interval_data(date_today_str)
+    spread_calculation()
 
     print('Finished the flow ✅' ,flush=True)
 
