@@ -33,6 +33,17 @@ dataset_urls = {
 hourly_bool = "5-min" not in dataset_option
 df = load_dataset(dataset_urls[dataset_option])
 
+# ======= PRICE LABELS =======
+price_labels = {
+    "LMP": "LMP",
+    "Energy Loss Price": "Energy Loss Price",
+    "Energy Congestion Price": "Energy Congestion Price",
+    "spread_4h_Real_Time": "Spread 4h – Real-Time",
+    "spread_4h_Day_Ahead": "Spread 4h – Day-Ahead",
+    "spread_4h_Pre_Dispatch": "Spread 4h – Pre-Dispatch",
+    "spread_Day_Ahead_vs_Real_Time": "Spread – DA vs RT"
+}
+
 # ======= SIDEBAR FILTERS =======
 with st.sidebar:
     st.header("🔍 Filters")
@@ -44,7 +55,6 @@ with st.sidebar:
     st.subheader("📅 Date Settings")
     min_date, max_date = df["Date"].min(), df["Date"].max()
     date_range = st.date_input("Date range", [min_date, max_date])
-
     include_avg = st.checkbox("Include average across selected dates", value=True)
 
     if len(date_range) == 2:
@@ -57,18 +67,30 @@ with st.sidebar:
     dispatch_type = st.multiselect("Select dispatch type", all_dispatch, default=all_dispatch)
 
     st.subheader("💲 Price Settings")
-    if "Energy" in dataset_option:
-        price_type = st.selectbox("Price Type:", ["LMP", "Energy Loss Price", "Energy Congestion Price"])
-    else:
-        price_type = st.selectbox("Price Type:", [
-            "LMP 10S", "Congestion Price 10S",
-            "LMP 10N", "Congestion Price 10N",
-            "LMP 30R", "Congestion Price 30R"
-        ])
+
+    base_energy_price_options = ["LMP", "Energy Loss Price", "Energy Congestion Price"]
+    custom_price_columns = [
+        "spread_4h_Real_Time",
+        "spread_4h_Day_Ahead",
+        "spread_4h_Pre_Dispatch",
+        "spread_Day_Ahead_vs_Real_Time"
+    ]
+
+    extra_price_options = [col for col in custom_price_columns if col in df.columns]
+    available_price_types = base_energy_price_options + extra_price_options
+
+    display_options = [price_labels.get(p, p) for p in available_price_types]
+    label_to_price_type = {price_labels.get(p, p): p for p in available_price_types}
+
+    selected_label = st.selectbox("Price Type:", display_options)
+    price_type = label_to_price_type[selected_label]
 
 # ======= UTILS =======
 def get_column_set(prefix):
-    return f"{price_type}_{prefix}"
+    if price_type in custom_price_columns:
+        return price_type
+    else:
+        return f"{price_type}_{prefix}"
 
 def melt_df(df_to_melt):
     value_vars = [
@@ -85,7 +107,10 @@ def melt_df(df_to_melt):
         var_name="Market",
         value_name="Price"
     )
-    melted["Market"] = melted["Market"].str.extract(r"_(Day_Ahead|Pre_Dispatch|Real_Time)")
+    if price_type in custom_price_columns:
+        melted["Market"] = price_type
+    else:
+        melted["Market"] = melted["Market"].str.extract(r"_(Day_Ahead|Pre_Dispatch|Real_Time)")
     return melted
 
 # ======= FILTER DATA =======
@@ -101,28 +126,23 @@ else:
 df_avg_melted = None
 df_avg = pd.DataFrame()
 if include_avg:
-    df_avg = compute_average_by_hour(df, dispatch_type=dispatch_type,start_date=start_date, end_date=end_date, hourly_bool=hourly_bool)
+    df_avg = compute_average_by_hour(df, dispatch_type=dispatch_type, start_date=start_date, end_date=end_date, hourly_bool=hourly_bool)
     df_avg = df_avg.sort_values(by=["Date", "Delivery Hour"])
     df_avg_melted = melt_df(df_avg)
 
 # ======= Handle Interval Timestamp =======
 def prepare_time_axis(df_plot):
     df_plot["timestamp"] = pd.to_datetime(df_plot["Date"]) + pd.to_timedelta(df_plot["Delivery Hour"], unit="h")
-
     if "Interval" in df_plot.columns:
         df_plot["timestamp"] += pd.to_timedelta((df_plot["Interval"] - 1) * 5, unit="min")
-
     return df_plot
 
-
 # ======= PLOT =======
-st.subheader(f"📈 {price_type} Price Evolution")
+st.subheader(f"📈 {price_labels.get(price_type, price_type)} Price Evolution")
 fig = go.Figure()
 
-# ➕ Filtered data
 if not df_melted.empty:
     df_melted = prepare_time_axis(df_melted)
-
     for market in df_melted["Market"].unique():
         for location in df_melted["Pricing Location"].unique():
             subset = df_melted[
@@ -138,14 +158,10 @@ if not df_melted.empty:
                 line=dict(dash="solid")
             ))
 
-# ➕ Average data
 if df_avg_melted is not None and not df_avg_melted.empty:
     df_avg_melted = prepare_time_axis(df_avg_melted)
-
     for market in df_avg_melted["Market"].unique():
-        subset = df_avg_melted[
-            df_avg_melted["Market"] == market
-        ].sort_values("timestamp")
+        subset = df_avg_melted[df_avg_melted["Market"] == market].sort_values("timestamp")
 
         fig.add_trace(go.Scatter(
             x=subset["timestamp"],
@@ -156,17 +172,16 @@ if df_avg_melted is not None and not df_avg_melted.empty:
         ))
 
 fig.update_layout(
-    title=f"{price_type} per {'interval' if not hourly_bool else 'hour'} across markets",
+    title=f"{price_labels.get(price_type, price_type)} per {'interval' if not hourly_bool else 'hour'} across markets",
     xaxis_title="Timestamp",
     yaxis_title="Price ($/MWh)",
     legend_title="Zone / Market",
     template="plotly_white",
-    hovermode="x unified"
+    hovermode="x unified",
+    height=600
 )
 
 st.plotly_chart(fig, use_container_width=True)
-
-
 
 # ======= DATA PREVIEW =======
 if not df_filtered.empty:
@@ -176,6 +191,7 @@ if not df_filtered.empty:
 if not df_avg.empty:
     with st.expander("📖 Overview of the average"):
         st.dataframe(df_avg.style.format(precision=2), use_container_width=True)
+
 
 
 st.markdown(
