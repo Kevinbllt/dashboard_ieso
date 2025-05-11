@@ -111,7 +111,17 @@ def compute_average_by_hour(
 def sort_and_extract_top(df, sort_col='LMP_Day_Ahead', ascending=True, top_n=5):
     df_grouped = (
         df.groupby('Pricing Location')
-          .mean(numeric_only=True)
+          .max(numeric_only=True)
+          .reset_index()
+          .sort_values(by=sort_col, ascending=ascending)
+    )
+
+    return df_grouped[['Pricing Location', sort_col]].head(top_n)
+
+def sort_and_extract_low(df, sort_col='LMP_Day_Ahead', ascending=True, top_n=5):
+    df_grouped = (
+        df.groupby('Pricing Location')
+          .min(numeric_only=True)
           .reset_index()
           .sort_values(by=sort_col, ascending=ascending)
     )
@@ -131,7 +141,7 @@ def build_statistics (df):
     dict_top = {}
 
     for metric in metrics:
-        dict_top[f"low_{metric}"] = sort_and_extract_top(
+        dict_top[f"low_{metric}"] = sort_and_extract_low(
             df,  sort_col=metric, ascending=True, top_n=5
         )
         dict_top[f"high_{metric}"] = sort_and_extract_top(
