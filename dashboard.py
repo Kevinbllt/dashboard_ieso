@@ -44,6 +44,13 @@ price_labels = {
     "spread_Day_Ahead_vs_Real_Time": "Spread – DA vs RT"
 }
 
+custom_price_columns = [
+    "spread_4h_Real_Time",
+    "spread_4h_Day_Ahead",
+    "spread_4h_Pre_Dispatch",
+    "spread_Day_Ahead_vs_Real_Time"
+]
+
 # ======= SIDEBAR FILTERS =======
 with st.sidebar:
     st.header("🔍 Filters")
@@ -68,22 +75,31 @@ with st.sidebar:
 
     st.subheader("💲 Price Settings")
 
-    base_energy_price_options = ["LMP", "Energy Loss Price", "Energy Congestion Price"]
-    custom_price_columns = [
-        "spread_4h_Real_Time",
-        "spread_4h_Day_Ahead",
-        "spread_4h_Pre_Dispatch",
-        "spread_Day_Ahead_vs_Real_Time"
-    ]
+    if dataset_option.startswith("Energy"):
+        base_energy_price_options = ["LMP", "Energy Loss Price", "Energy Congestion Price"]
+        custom_price_columns = [
+            "spread_4h_Real_Time",
+            "spread_4h_Day_Ahead",
+            "spread_4h_Pre_Dispatch",
+            "spread_Day_Ahead_vs_Real_Time"
+        ]
+        extra_price_options = [col for col in custom_price_columns if col in df.columns]
+        available_price_types = base_energy_price_options + extra_price_options
 
-    extra_price_options = [col for col in custom_price_columns if col in df.columns]
-    available_price_types = base_energy_price_options + extra_price_options
+        display_options = [price_labels.get(p, p) for p in available_price_types]
+        label_to_price_type = {price_labels.get(p, p): p for p in available_price_types}
 
-    display_options = [price_labels.get(p, p) for p in available_price_types]
-    label_to_price_type = {price_labels.get(p, p): p for p in available_price_types}
+        selected_label = st.selectbox("Price Type:", display_options)
+        price_type = label_to_price_type[selected_label]
 
-    selected_label = st.selectbox("Price Type:", display_options)
-    price_type = label_to_price_type[selected_label]
+    else:
+        # Operating Reserve dataset
+        available_price_types = [
+            "LMP 10S", "Congestion Price 10S",
+            "LMP 10N", "Congestion Price 10N",
+            "LMP 30R", "Congestion Price 30R"
+        ]
+        price_type = st.selectbox("Price Type:", available_price_types)
 
 # ======= UTILS =======
 def get_column_set(prefix):
