@@ -51,6 +51,7 @@ custom_price_columns = [
     "spread_Day_Ahead_vs_Real_Time"
 ]
 
+
 # ======= SIDEBAR FILTERS =======
 with st.sidebar:
     st.header("🔍 Filters")
@@ -77,12 +78,6 @@ with st.sidebar:
 
     if dataset_option.startswith("Energy"):
         base_energy_price_options = ["LMP", "Energy Loss Price", "Energy Congestion Price"]
-        custom_price_columns = [
-            "spread_4h_Real_Time",
-            "spread_4h_Day_Ahead",
-            "spread_4h_Pre_Dispatch",
-            "spread_Day_Ahead_vs_Real_Time"
-        ]
         extra_price_options = [col for col in custom_price_columns if col in df.columns]
         available_price_types = base_energy_price_options + extra_price_options
 
@@ -100,6 +95,7 @@ with st.sidebar:
             "LMP 30R", "Congestion Price 30R"
         ]
         price_type = st.selectbox("Price Type:", available_price_types)
+
 
 # ======= UTILS =======
 def get_column_set(prefix):
@@ -207,6 +203,7 @@ if not df_filtered.empty:
 if not df_avg.empty:
     with st.expander("📖 Overview of the average"):
         st.dataframe(df_avg.style.format(precision=2), use_container_width=True)
+
 
 
 
