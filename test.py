@@ -148,15 +148,60 @@ elif page == "📈 Statistics":
         st.stop()
 
     stats_dict = build_statistics(df_filtered)
+
     col1, col2 = st.columns(2)
     with col1:
         mode = st.selectbox("Choose type", ["Low", "High"])
     with col2:
-        metric = st.selectbox("Choose metric", ["LMP_Day_Ahead", "LMP_Real_Time", "spread_4h_Day_Ahead", "spread_4h_Real_Time", "spread_Day_Ahead_vs_Real_Time"])
+        metric = st.selectbox("Choose metric", [
+            "LMP_Day_Ahead",
+            "LMP_Real_Time",
+            "spread_4h_Day_Ahead",
+            "spread_4h_Real_Time",
+            "spread_Day_Ahead_vs_Real_Time"
+        ])
 
     key = f"{mode.lower()}_{metric}"
     df_to_plot = stats_dict.get(key)
+
     ascending = True if mode == "Low" else False
+    df_sorted = df_to_plot.sort_values(by=metric, ascending=ascending)
+    category_order = df_sorted["Pricing Location"].tolist()
+    values = df_sorted[metric]
+    colors = values[::-1] if mode == "Low" else values
+
+    fig = go.Figure(go.Bar(
+        x=values,
+        y=df_sorted["Pricing Location"],
+        orientation="h",
+        text=[f"{v:.2f}" for v in values],
+        textposition="inside",
+        insidetextanchor="start",
+        marker=dict(
+            color=colors,
+            colorscale='Blues' if mode == "Low" else 'Reds',
+            reversescale=False,
+            colorbar=dict(title=metric)
+        )
+    ))
+
+    fig.update_layout(
+        xaxis_title=metric,
+        yaxis_title="",
+        yaxis=dict(
+            categoryorder="array",
+            categoryarray=category_order[::-1]
+        ),
+        height=450,
+        showlegend=False,
+        margin=dict(l=40, r=20, t=20, b=40),
+        plot_bgcolor="rgba(0,0,0,0)"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+
+
 
 
 st.markdown("""
