@@ -5,13 +5,11 @@ import plotly.express as px
 from datetime import datetime
 from filter import apply_filters, compute_average_by_hour, sort_and_extract_top, build_statistics
 
-# ======= CONFIG =======
-st.set_page_config(page_title="IESO Market App", layout="wide")
+# ======= CONFIGURATION =======
+st.set_page_config(page_title="IESO Market Dashboard", layout="wide")
+st.title("📊 IESO Market Dashboard")
 
-# ======= PAGE SELECTOR =======
-page = st.sidebar.radio("📄 Select a page", ["📊 Market Dashboard", "📈 Statistics"])
-
-# ======= LOAD DATA (GCP Cached) =======
+# ======= LOAD DATA (cached) =======
 @st.cache_data(ttl=3600)
 def load_dataset(url):
     df = pd.read_csv(url, compression='gzip', parse_dates=["Date"])
@@ -24,6 +22,11 @@ dataset_urls = {
     "Energy - 5-min intervals": "https://storage.googleapis.com/ieso_monitoring_market_data/energy/processed/energy_historical_interval.csv.gz",
     "Operating Reserve - 5-min intervals": "https://storage.googleapis.com/ieso_monitoring_market_data/operating_reserve/processed/OR_historical_interval.csv.gz"
 }
+
+# 👉 FIRST dataset select + load
+dataset_option = st.sidebar.selectbox("⚡ Available Datasets", list(dataset_urls.keys()))
+hourly_bool = "5-min" not in dataset_option
+df = load_dataset(dataset_urls[dataset_option])
 
 # ======= PRICE LABELS =======
 price_labels = {
@@ -43,7 +46,6 @@ custom_price_columns = [
     "spread_Day_Ahead_vs_Real_Time"
 ]
 
-
 # ======= SIDEBAR FILTERS =======
 with st.sidebar:
     st.header("🔍 Filters")
@@ -57,17 +59,13 @@ with st.sidebar:
     date_range = st.date_input("Date range", [min_date, max_date])
     include_avg = st.checkbox("Include average across selected dates", value=True)
 
-    if len(date_range) == 2:
-        start_date, end_date = pd.to_datetime(date_range[0]), pd.to_datetime(date_range[1])
-    else:
-        start_date = end_date = pd.to_datetime(date_range[0])
+    start_date, end_date = pd.to_datetime(date_range[0]), pd.to_datetime(date_range[-1])
 
     st.subheader("📑 Dispatch Settings")
     all_dispatch = ['Day_Ahead', 'Pre_Dispatch', 'Real_Time']
     dispatch_type = st.multiselect("Select dispatch type", all_dispatch, default=all_dispatch)
 
     st.subheader("💲 Price Settings")
-
     if dataset_option.startswith("Energy"):
         base_energy_price_options = ["LMP", "Energy Loss Price", "Energy Congestion Price"]
         extra_price_options = [col for col in custom_price_columns if col in df.columns]
@@ -78,16 +76,13 @@ with st.sidebar:
 
         selected_label = st.selectbox("Price Type:", display_options)
         price_type = label_to_price_type[selected_label]
-
     else:
-        # Operating Reserve dataset
         available_price_types = [
             "LMP 10S", "Congestion Price 10S",
             "LMP 10N", "Congestion Price 10N",
             "LMP 30R", "Congestion Price 30R"
         ]
         price_type = st.selectbox("Price Type:", available_price_types)
-
 
 # ======= UTILS =======
 def get_column_set(prefix):
@@ -97,14 +92,9 @@ def get_column_set(prefix):
         return f"{price_type}_{prefix}"
 
 def melt_df(df_to_melt):
-    value_vars = [
-        get_column_set(suffix)
-        for suffix in dispatch_type
-        if get_column_set(suffix) in df_to_melt.columns
-    ]
+    value_vars = [get_column_set(suffix) for suffix in dispatch_type if get_column_set(suffix) in df_to_melt.columns]
     if not value_vars:
         return pd.DataFrame()
-
     melted = df_to_melt.melt(
         id_vars=["Pricing Location", "Date", "Delivery Hour"] + (["Interval"] if "Interval" in df_to_melt.columns else []),
         value_vars=value_vars,
@@ -149,11 +139,7 @@ if not df_melted.empty:
     df_melted = prepare_time_axis(df_melted)
     for market in df_melted["Market"].unique():
         for location in df_melted["Pricing Location"].unique():
-            subset = df_melted[
-                (df_melted["Market"] == market) &
-                (df_melted["Pricing Location"] == location)
-            ].sort_values("timestamp")
-
+            subset = df_melted[(df_melted["Market"] == market) & (df_melted["Pricing Location"] == location)].sort_values("timestamp")
             fig.add_trace(go.Scatter(
                 x=subset["timestamp"],
                 y=subset["Price"],
@@ -166,7 +152,6 @@ if df_avg_melted is not None and not df_avg_melted.empty:
     df_avg_melted = prepare_time_axis(df_avg_melted)
     for market in df_avg_melted["Market"].unique():
         subset = df_avg_melted[df_avg_melted["Market"] == market].sort_values("timestamp")
-
         fig.add_trace(go.Scatter(
             x=subset["timestamp"],
             y=subset["Price"],
@@ -196,11 +181,8 @@ if not df_avg.empty:
     with st.expander("📖 Overview of the average"):
         st.dataframe(df_avg.style.format(precision=2), use_container_width=True)
 
-st.markdown(
-    f"""
+st.markdown("""
     <div style='text-align: center; color: grey; margin-top: 50px; font-size: 0.9em;'>
         🕑 This dashboard is updated every day at <b>10am Toronto time</b>
     </div>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
