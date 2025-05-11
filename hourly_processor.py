@@ -167,6 +167,15 @@ def add_hourly_energy_data (hourly_energy_df:pd.DataFrame, date_str:str):
 
     if target_date.date() not in energy_historical_df["Date"].dt.date.unique():
         print("⚙️ Start adding the new data to the historical energy file" ,flush=True)
+
+        hourly_energy_df = (hourly_energy_df
+                            .assign( spread_Day_Ahead_vs_Real_Time = pd.NA,
+                                    spread_4h_Day_Ahead = pd.NA,
+                                    spread_4h_Pre_Dispatch = pd.NA,
+                                    spread_4h_Real_Time = pd.NA
+                                    )
+                            )
+
         hourly_energy_df = hourly_energy_df[energy_historical_columns]  # enforce column order
         new_historical_df = pd.concat([energy_historical_df, hourly_energy_df], axis=0)
         new_historical_df.sort_values('Date', ascending=True)
