@@ -4,6 +4,30 @@ import plotly.graph_objects as go
 from datetime import datetime
 from filter import apply_filters, compute_average_by_hour, sort_and_extract_top, build_statistics
 
+
+def check_password():
+    """Simple password protection"""
+    def password_entered():
+        if st.session_state["password"] == st.secrets["auth"]["password"]:
+            st.session_state["authenticated"] = True
+            del st.session_state["password"]  # Don’t store password
+        else:
+            st.session_state["authenticated"] = False
+
+    if "authenticated" not in st.session_state:
+        st.title("🔒 IESO Market App – Login")
+        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
+        st.stop()
+    elif not st.session_state["authenticated"]:
+        st.title("🔒 IESO Market App – Login")
+        st.error("Incorrect password. Try again.")
+        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
+        st.stop()
+
+check_password()
+
+
+
 st.set_page_config(page_title="IESO Market App", layout="wide")
 
 # ======= PAGE SELECTOR =======
