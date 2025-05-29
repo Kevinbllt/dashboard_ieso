@@ -23,7 +23,7 @@ def check_password():
         st.error("Incorrect password. Try again.")
         st.text_input("Enter password", type="password", on_change=password_entered, key="password")
         st.stop()
-
+        
 check_password()
 
 
